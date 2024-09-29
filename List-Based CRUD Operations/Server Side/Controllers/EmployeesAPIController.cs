@@ -25,5 +25,22 @@ namespace Server_Side.Controllers
             return Ok(employees);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("GetTerminatedEmployees", Name = "GetTerminatedEmployees")]
+        public ActionResult<List<clsEmployee>> GetTerminatedEmployees()
+        {
+            List<clsEmployee> terminatedEmps = EmployeesDataSimulation.EmployeesList.Where(e => e.TerminationDate is null).ToList();
+
+            if (terminatedEmps.Count == 0)
+            {
+                return NotFound("No employees are laid off.");
+            }
+
+            return Ok(terminatedEmps);
+
+        }
+
     }
+
 }
