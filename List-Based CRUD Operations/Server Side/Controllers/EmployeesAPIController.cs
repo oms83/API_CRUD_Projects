@@ -93,6 +93,7 @@ namespace Server_Side.Controllers
             return Ok(employee);
         }
 
+
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [HttpPost("AddNewEmployee", Name = "AddNewEmployee")]
@@ -110,6 +111,30 @@ namespace Server_Side.Controllers
             EmployeesDataSimulation.EmployeesList.Add(employee);
 
             return CreatedAtRoute("", empID, employee);
+        }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpDelete("{id}", Name = "DeleteStudent")]
+        public ActionResult DeleteEmployee(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted ID");
+            }
+
+            clsEmployee? employee = EmployeesDataSimulation.EmployeesList.Find(e => e.Id == id);
+
+            if (employee == null)
+            {
+                return NotFound($"No Employee With ID {{{id}}}");
+            }
+
+            EmployeesDataSimulation.EmployeesList.Remove(employee);
+
+            return Ok($"Student with id {{{id}}} has been deleted");
         }
     }
 
