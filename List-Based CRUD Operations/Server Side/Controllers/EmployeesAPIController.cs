@@ -25,12 +25,13 @@ namespace Server_Side.Controllers
             return Ok(employees);
         }
 
+
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpGet("GetTerminatedEmployees", Name = "GetTerminatedEmployees")]
         public ActionResult<List<clsEmployee>> GetTerminatedEmployees()
         {
-            List<clsEmployee> terminatedEmps = EmployeesDataSimulation.EmployeesList.Where(e => e.TerminationDate is null).ToList();
+            List<clsEmployee> terminatedEmps = EmployeesDataSimulation.EmployeesList.Where(e => e.TerminationDate is not null).ToList();
 
             if (terminatedEmps.Count == 0)
             {
@@ -41,6 +42,32 @@ namespace Server_Side.Controllers
 
         }
 
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("GetEmployeesWithHigherSalary/{salary}", Name = "GetEmployeesWithHigherSalary")]
+        public ActionResult<List<clsEmployee>> GetEmployeesWithHigherSalary(decimal salary)
+        {
+            if (salary <= 0)
+            {
+                return BadRequest("Not Accepted Salary");
+            }
+
+            
+            List<clsEmployee> employees = EmployeesDataSimulation.EmployeesList.Where(e => e.Salary > salary).ToList();
+
+            if (!employees.Any(e => e.Salary > salary))
+            {
+                return BadRequest($"The number entered is actually greater than all the employees' salaries.");
+            }
+
+            if (employees.Count == 0)
+            {
+                return NotFound($"There are no employees with salaries more than {salary}");
+            }
+
+            return Ok(employees);
+        }
     }
 
 }
