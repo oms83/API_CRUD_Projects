@@ -1,5 +1,7 @@
 ﻿using Microsoft.AspNetCore.Http;
+using Microsoft.AspNetCore.Http.HttpResults;
 using Microsoft.AspNetCore.Mvc;
+using Server_Side.Controllers.Validation;
 using Server_Side.Data_Simulation;
 using Server_Side.Model;
 
@@ -89,6 +91,25 @@ namespace Server_Side.Controllers
             }
 
             return Ok(employee);
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("AddNewEmployee", Name = "AddNewEmployee")]
+        public ActionResult<clsEmployee> AddNewEmployee(clsEmployee employee)
+        {
+            int empID = EmployeesDataSimulation.EmployeesList.Count + 1;
+
+            employee.Id = empID;
+            
+            if (!(new clsEmployeeValidator().Validate(employee).IsValid))
+            {
+                return BadRequest("Invalid employee data");
+            }
+
+            EmployeesDataSimulation.EmployeesList.Add(employee);
+
+            return CreatedAtRoute("", empID, employee);
         }
     }
 
