@@ -117,7 +117,7 @@ namespace Server_Side.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpDelete("{id}", Name = "DeleteStudent")]
+        [HttpDelete("{id}", Name = "DeleteEmployee")]
         public ActionResult DeleteEmployee(int id)
         {
             if (id <= 0)
@@ -134,7 +134,43 @@ namespace Server_Side.Controllers
 
             EmployeesDataSimulation.EmployeesList.Remove(employee);
 
-            return Ok($"Student with id {{{id}}} has been deleted");
+            return Ok($"Employee with id {{{id}}} has been deleted");
+        }
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPut("{id}", Name = "UpdateEmployee")]
+        public ActionResult<clsEmployee> UpdateEmployee(int id, clsEmployee newEmployee)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted ID");
+            }
+
+
+            clsEmployee? employee = EmployeesDataSimulation.EmployeesList.Find(e => e.Id == id);
+
+            if (employee == null)
+            {
+                return NotFound($"No Employee With ID {{{id}}}");
+            }
+
+            newEmployee.Id = id;
+            
+            if (!(new clsEmployeeValidator().Validate(newEmployee).IsValid))
+            {
+                return BadRequest("Invalid employee data");
+            }
+
+            employee.Salary = newEmployee.Salary;
+            employee.LastName = newEmployee.LastName;
+            employee.FirstName = newEmployee.FirstName;
+            employee.TerminationDate = newEmployee.TerminationDate;
+            employee.HireDate = newEmployee.HireDate;   
+            employee.Age = newEmployee.Age;
+
+            return (employee);
         }
     }
 
