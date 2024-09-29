@@ -19,7 +19,7 @@ namespace Server_Side.Controllers
 
             if (employees.Count == 0)
             {
-                return NotFound("Not employees to list");
+                return NotFound("No employees to list");
             }
 
             return Ok(employees);
@@ -67,6 +67,28 @@ namespace Server_Side.Controllers
             }
 
             return Ok(employees);
+        }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpGet("{id}", Name = "GetEmployeeByID")]
+        public ActionResult<clsEmployee> GetEmployeeByID(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted ID");
+            }
+
+            clsEmployee? employee = EmployeesDataSimulation.EmployeesList.Find(e => e.Id == id);
+
+            if (employee == null)
+            {
+                return NotFound($"No Employee With ID {{{id}}}");
+            }
+
+            return Ok(employee);
         }
     }
 
