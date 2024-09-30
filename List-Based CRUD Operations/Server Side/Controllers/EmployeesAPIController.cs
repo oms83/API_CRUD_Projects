@@ -18,6 +18,11 @@ namespace Server_Side.Controllers
         {
             
             List<clsEmployee> employees = EmployeesDataSimulation.EmployeesList;
+            
+            if (employees is null)
+            {
+                return BadRequest("No Data");
+            }
 
             if (employees.Count == 0)
             {
@@ -136,6 +141,7 @@ namespace Server_Side.Controllers
 
             return Ok($"Employee with id {{{id}}} has been deleted");
         }
+
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
