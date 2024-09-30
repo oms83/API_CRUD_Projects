@@ -15,7 +15,9 @@ public class Program
     {
         httpClient.BaseAddress = new Uri("https://localhost:7299/api/Employees/");
 
-        await GetAllEmployees();
+        //await GetAllEmployees();
+
+        await GetTerminatedEmployees();
 
         Console.ReadKey();
     }
@@ -44,4 +46,28 @@ public class Program
         }
     }
 
+    static async Task GetTerminatedEmployees()
+    {
+        try
+        {
+            List<clsEmployee>? employees = await httpClient.GetFromJsonAsync<List<clsEmployee>>("GetTerminatedEmployees");
+
+            if (employees == null)
+            {
+                Console.WriteLine("Bad Request: No Data");
+                //return;
+            }
+
+            if (employees?.Count == 0)
+            {
+                Console.WriteLine("Not Found: No employees are laid off.");
+            }
+
+            employees?.Print();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
 }
