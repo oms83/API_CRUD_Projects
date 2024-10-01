@@ -2,6 +2,7 @@
 
 using Client_Side;
 using System.Net.Http.Json;
+using System.Threading.Channels;
 
 public static class Utatlity
 {
@@ -17,7 +18,11 @@ public class Program
 
         //await GetAllEmployees();
 
-        await GetTerminatedEmployees();
+        //await GetTerminatedEmployees();
+
+        await GetEmployeesWithHigherSalary(1000000);
+        await GetEmployeesWithHigherSalary(5000);
+        await GetEmployeesWithHigherSalary(-5000);
 
         Console.ReadKey();
     }
@@ -64,6 +69,38 @@ public class Program
             }
 
             employees?.Print();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    static async Task GetEmployeesWithHigherSalary(decimal salary)
+    {
+        try
+        {
+            if (salary <= 0)
+            {
+                Console.WriteLine("Bad Request: Not Accepted Salary");
+            }
+
+            var response = await httpClient.GetAsync($"GetEmployeesWithHigherSalary/{salary}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                var emps = await response.Content.ReadFromJsonAsync<List<clsEmployee>>();
+
+                emps?.Print();
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("The number entered is actually greater than all the employees' salaries.");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"There are no employees with salaries more than {salary}");
+            }
         }
         catch (Exception ex)
         {
