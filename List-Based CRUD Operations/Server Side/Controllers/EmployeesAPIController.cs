@@ -104,6 +104,11 @@ namespace Server_Side.Controllers
         [HttpPost("AddNewEmployee", Name = "AddNewEmployee")]
         public ActionResult<clsEmployee> AddNewEmployee(clsEmployee employee)
         {
+            if (employee is null)
+            {
+                return BadRequest("Invalid employee data (null)");
+            }
+
             int empID = EmployeesDataSimulation.EmployeesList.Count + 1;
 
             employee.Id = empID;

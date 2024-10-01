@@ -24,10 +24,29 @@ public class Program
         //await GetEmployeesWithHigherSalary(5000);
         //await GetEmployeesWithHigherSalary(-5000);
 
-        await GetEmployeeByID(-1);
-        await GetEmployeeByID(100);
-        await GetEmployeeByID(20);
+        //await GetEmployeeByID(-1);
+        //await GetEmployeeByID(100);
+        //await GetEmployeeByID(20);
 
+        await AddNewEmployee(new clsEmployee()
+        {
+            FirstName = "Salih", 
+            LastName = "Ozdemir", 
+            Age = 30, 
+            HireDate = DateTime.Now, 
+            Salary = 200000m, 
+            TerminationDate = null
+        });
+
+        await AddNewEmployee(new clsEmployee()
+        {
+            FirstName = "Salih",
+            LastName = "Ozdemir",
+            Age = -50,
+            HireDate = DateTime.Now,
+            Salary = 200000m,
+            TerminationDate = null
+        });
         Console.ReadKey();
     }
     static async Task GetAllEmployees()
@@ -115,34 +134,76 @@ public class Program
 
     static async Task GetEmployeeByID(int id)
     {
-        if (id <= 0)
+        try
         {
-            Console.WriteLine($"Not Accepted ID{{{id}}}");
-            return;
-        }
-
-        var response = await httpClient.GetAsync($"{id}");
-
-        if (response.IsSuccessStatusCode)
-        {
-            clsEmployee? employee  = await response.Content.ReadFromJsonAsync<clsEmployee>();
-
-            if (employee is not null)
+            if (id <= 0)
             {
-                Console.WriteLine(employee);
+                Console.WriteLine($"Not Accepted ID{{{id}}}");
+                return;
             }
-            else
+
+            var response = await httpClient.GetAsync($"{id}");
+
+            if (response.IsSuccessStatusCode)
             {
-                Console.WriteLine("no sutdent info (null)");
+                clsEmployee? employee = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+                if (employee is not null)
+                {
+                    Console.WriteLine(employee);
+                }
+                else
+                {
+                    Console.WriteLine("no sutdent info (null)");
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"Not Found: No Student With ID{{{id}}}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine($"Bad Request: Not Accepted ID{{{id}}}");
             }
         }
-        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        catch (Exception ex)
         {
-            Console.WriteLine($"Not Found: No Student With ID{{{id}}}");
-        }
-        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
-        {
-            Console.WriteLine($"Bad Request: Not Accepted ID{{{id}}}");
+            Console.WriteLine(ex.Message);
         }
     }
+
+    static async Task AddNewEmployee(clsEmployee employee)
+    {
+        try
+        {
+
+            if (!(new clsEmployeeValidator()).Validate(employee).IsValid)
+            {
+                Console.WriteLine("Bad Request: Invalid Employee Data");
+                return;
+            }
+
+            var response = await httpClient.PostAsJsonAsync("AddNewEmployee", employee);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var newEmployee = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+                if (newEmployee is not null)
+                {
+                    Console.WriteLine(newEmployee);
+                }
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("Bad Requset: Invalid Employee Data.");
+                return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
 }
