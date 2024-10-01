@@ -20,9 +20,13 @@ public class Program
 
         //await GetTerminatedEmployees();
 
-        await GetEmployeesWithHigherSalary(1000000);
-        await GetEmployeesWithHigherSalary(5000);
-        await GetEmployeesWithHigherSalary(-5000);
+        //await GetEmployeesWithHigherSalary(1000000);
+        //await GetEmployeesWithHigherSalary(5000);
+        //await GetEmployeesWithHigherSalary(-5000);
+
+        await GetEmployeeByID(-1);
+        await GetEmployeeByID(100);
+        await GetEmployeeByID(20);
 
         Console.ReadKey();
     }
@@ -83,6 +87,7 @@ public class Program
             if (salary <= 0)
             {
                 Console.WriteLine("Bad Request: Not Accepted Salary");
+                return;
             }
 
             var response = await httpClient.GetAsync($"GetEmployeesWithHigherSalary/{salary}");
@@ -105,6 +110,39 @@ public class Program
         catch (Exception ex)
         {
             Console.WriteLine(ex.Message);
+        }
+    }
+
+    static async Task GetEmployeeByID(int id)
+    {
+        if (id <= 0)
+        {
+            Console.WriteLine($"Not Accepted ID{{{id}}}");
+            return;
+        }
+
+        var response = await httpClient.GetAsync($"{id}");
+
+        if (response.IsSuccessStatusCode)
+        {
+            clsEmployee? employee  = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+            if (employee is not null)
+            {
+                Console.WriteLine(employee);
+            }
+            else
+            {
+                Console.WriteLine("no sutdent info (null)");
+            }
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+        {
+            Console.WriteLine($"Not Found: No Student With ID{{{id}}}");
+        }
+        else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+        {
+            Console.WriteLine($"Bad Request: Not Accepted ID{{{id}}}");
         }
     }
 }
