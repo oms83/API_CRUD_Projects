@@ -79,5 +79,28 @@ namespace Server_Side.Controllers
 
             return Ok(empDTO);
         }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPost("AddNewEmployee", Name = "AddNewEmployee")]
+        public ActionResult<clsEmployeeDTO> AddNewEmployee(clsEmployeeDTO employeeDTO)
+        {
+            if (!EmployeeValidator.Validator(false).Validate(employeeDTO).IsValid)
+            {
+                return BadRequest("Invalid Employee Data");
+            }
+
+            Employee employee = new Employee(employeeDTO, Employee.enMode.AddNew);
+
+            if (employee.Save())
+            {
+                employeeDTO = employee.EmployeeDTO;
+
+                return CreatedAtRoute("", employee.Id, employeeDTO);
+            }
+
+            return BadRequest("Employee was not inserted successfully");
+        }
     }
 }

@@ -6,7 +6,7 @@ namespace Data_Business
 {
     public class Employee
     {
-        public enum enMode { AddNew = 0, Update = 0 }
+        public enum enMode { AddNew = 0, Update = 1 }
 
         private enMode _Mode = enMode.AddNew;
         public int Id { get; set; }
@@ -63,5 +63,32 @@ namespace Data_Business
             }
         }
 
+        private bool _AddNewEmployee()
+        {
+            this.Id = Data_Access.EmployeeDataAccess.AddNewStudent(this.EmployeeDTO);
+
+            return this.Id != -1;
+        }
+
+        public bool Save()
+        {
+            switch (_Mode)
+            {
+                case enMode.AddNew:
+                    if (_AddNewEmployee())
+                    {
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+                    return false;
+            }
+
+            return false;
+        }
     }
 }

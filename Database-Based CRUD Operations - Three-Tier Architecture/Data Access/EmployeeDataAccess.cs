@@ -1,5 +1,6 @@
 ﻿using Microsoft.Data.SqlClient;
 using System.Data;
+using System.Diagnostics;
 
 namespace Data_Access
 {
@@ -119,6 +120,41 @@ namespace Data_Access
                 }
 
                 return employeeDTO;
+            }
+        }
+
+        public static int AddNewStudent(clsEmployeeDTO employeeDTO)
+        {
+            using (SqlConnection connection = new SqlConnection(Settings.ConnectionString))
+            {
+                int empID = -1;
+
+                string Query = @"Insert Into Employees (FirstName, LastName, Age, Salary, HireDate, TerminationDate)
+                        Values (@FirstName, @LastName, @Age, @Salary, @HireDate, @TerminationDate);
+                        Select SCOPE_IDENTITY();
+                        ";
+
+                using (SqlCommand command = new SqlCommand(Query, connection))
+                {
+                    command.Parameters.AddWithValue("FirstName", employeeDTO.FirstName);
+                    command.Parameters.AddWithValue("LastName", employeeDTO.LastName);
+                    command.Parameters.AddWithValue("Age", employeeDTO.Age);
+                    command.Parameters.AddWithValue("Salary", employeeDTO.Salary);
+                    command.Parameters.AddWithValue("HireDate", employeeDTO.HireDate);
+                    command.Parameters.AddWithValue("TerminationDate", employeeDTO.TerminationDate);
+
+                    connection.Open();
+
+                    object result = command.ExecuteScalar();
+
+
+                    if (int.TryParse(result.ToString(), out int id))
+                    {
+                        empID = id;
+                    }
+                }
+
+                return empID;
             }
         }
 
