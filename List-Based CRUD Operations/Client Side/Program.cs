@@ -249,4 +249,41 @@ public class Program
         }
     }
 
+    static async Task UpdateEmployee(int id, clsEmployee employee)
+    {
+        try
+        {
+            if (id <= 0)
+            {
+                Console.WriteLine($"Not Accepted ID{{{id}}}");
+                return;
+            }
+
+            if (!(new clsEmployeeValidator()).Validate(employee).IsValid)
+            {
+                Console.WriteLine("Invalid Employee Data");
+                return;
+            }
+
+            var response = await httpClient.PutAsJsonAsync<clsEmployee>($"{id}", employee);
+
+            if (response.IsSuccessStatusCode)
+            {
+                var Updatedemp = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+                Console.WriteLine(Updatedemp);
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine("Invalid Employee Data");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"No Employee With ID {{{id}}}");
+            }
+
+
+        }
+    }
+
 }
