@@ -28,25 +28,38 @@ public class Program
         //await GetEmployeeByID(100);
         //await GetEmployeeByID(20);
 
-        await AddNewEmployee(new clsEmployee()
-        {
-            FirstName = "Salih", 
-            LastName = "Ozdemir", 
-            Age = 30, 
-            HireDate = DateTime.Now, 
-            Salary = 200000m, 
-            TerminationDate = null
-        });
+        //await AddNewEmployee(new clsEmployee()
+        //{
+        //    FirstName = "Salih", 
+        //    LastName = "Ozdemir", 
+        //    Age = 30, 
+        //    HireDate = DateTime.Now, 
+        //    Salary = 200000m, 
+        //    TerminationDate = null
+        //});
 
-        await AddNewEmployee(new clsEmployee()
-        {
-            FirstName = "Salih",
-            LastName = "Ozdemir",
-            Age = -50,
-            HireDate = DateTime.Now,
-            Salary = 200000m,
-            TerminationDate = null
-        });
+        //await AddNewEmployee(new clsEmployee()
+        //{
+        //    FirstName = "Salih",
+        //    LastName = "Ozdemir",
+        //    Age = -50,
+        //    HireDate = DateTime.Now,
+        //    Salary = 200000m,
+        //    TerminationDate = null
+        //});
+        
+        await GetAllEmployees();
+        Console.WriteLine("-------------------");
+        
+        await DeleteEmployee(-2);
+        await DeleteEmployee(2);
+        await DeleteEmployee(102);
+
+        Console.WriteLine("-------------------");
+        await GetAllEmployees();
+
+
+
         Console.ReadKey();
     }
     static async Task GetAllEmployees()
@@ -198,6 +211,36 @@ public class Program
             {
                 Console.WriteLine("Bad Requset: Invalid Employee Data.");
                 return;
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine(ex.Message);
+        }
+    }
+
+    static async Task DeleteEmployee(int id)
+    {
+        try
+        {
+            if (id <= 0)
+            {
+                Console.WriteLine($"Not Accepted ID {{{id}}}");
+            }
+
+            var response = await httpClient.DeleteAsync($"{id}");
+
+            if (response.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Employee with id {{{id}}} has been deleted");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+            {
+                Console.WriteLine($"No Employee With ID {{{id}}}");
+            }
+            else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+            {
+                Console.WriteLine($"Not Accepted ID {{{id}}}");
             }
         }
         catch (Exception ex)
