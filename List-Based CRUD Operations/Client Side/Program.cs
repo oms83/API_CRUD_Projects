@@ -47,18 +47,38 @@ public class Program
         //    Salary = 200000m,
         //    TerminationDate = null
         //});
-        
+
         await GetAllEmployees();
-        Console.WriteLine("-------------------");
-        
-        await DeleteEmployee(-2);
-        await DeleteEmployee(2);
-        await DeleteEmployee(102);
+        //Console.WriteLine("-------------------");
 
-        Console.WriteLine("-------------------");
-        await GetAllEmployees();
+        //await DeleteEmployee(-2);
+        //await DeleteEmployee(2);
+        //await DeleteEmployee(102);
 
+        //Console.WriteLine("-------------------");
+        //await GetAllEmployees();
 
+        await UpdateEmployee(3,
+        new clsEmployee()
+        {
+            FirstName = "Salih",
+            LastName = "Ozdemir",
+            Age = 30,
+            HireDate = DateTime.Now,
+            Salary = 200000m,
+            TerminationDate = null
+        });
+
+        await UpdateEmployee(3,
+        new clsEmployee()
+        {
+            FirstName = "Salih",
+            LastName = "Ozdemir",
+            Age = -50,
+            HireDate = DateTime.Now,
+            Salary = 200000m,
+            TerminationDate = null
+        });
 
         Console.ReadKey();
     }
@@ -259,12 +279,6 @@ public class Program
                 return;
             }
 
-            if (!(new clsEmployeeValidator()).Validate(employee).IsValid)
-            {
-                Console.WriteLine("Invalid Employee Data");
-                return;
-            }
-
             var response = await httpClient.PutAsJsonAsync<clsEmployee>($"{id}", employee);
 
             if (response.IsSuccessStatusCode)
@@ -281,8 +295,10 @@ public class Program
             {
                 Console.WriteLine($"No Employee With ID {{{id}}}");
             }
-
-
+        }
+        catch (Exception e)
+        {
+            Console.WriteLine(e.Message);
         }
     }
 
