@@ -10,5 +10,10 @@ namespace Data_Business
         {
             return EmployeeDataAccess.GetAllEmployees();
         }
+
+        public static IEnumerable<clsEmployeeDTO> GetActiveEmployees()
+        {
+            return EmployeeDataAccess.GetActiveEmployees();
+        }
     }
 }

@@ -11,7 +11,7 @@ namespace Server_Side.Controllers
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        [HttpGet]
+        [HttpGet("GetAllEmployees", Name = "GetAllEmployees")]
         public ActionResult<IEnumerable<clsEmployeeDTO>> GetAllEmployees()
         {
             IEnumerable<clsEmployeeDTO> employees = new List<clsEmployeeDTO>();
@@ -31,5 +31,27 @@ namespace Server_Side.Controllers
             return Ok(employees);
         }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpGet("GetActiveEmployees", Name = "GetActiveEmployees")]
+        public ActionResult<IEnumerable<clsEmployeeDTO>> GetActiveEmployees()
+        {
+            IEnumerable<clsEmployeeDTO> employees = new List<clsEmployeeDTO>();
+
+            employees = Data_Business.EmployeeBusiness.GetActiveEmployees();
+
+            if (employees == null)
+            {
+                return BadRequest("Data was not fetched successfully.");
+            }
+
+            if (employees.Count() == 0)
+            {
+                return NotFound("No Data To List");
+            }
+
+            return Ok(employees);
+        }
     }
 }
