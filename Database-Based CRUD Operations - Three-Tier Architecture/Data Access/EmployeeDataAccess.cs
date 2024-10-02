@@ -79,5 +79,48 @@ namespace Data_Access
             }
         }
 
+        public static clsEmployeeDTO GetEmployeeByID(int EmployeeID)
+        {
+            using (SqlConnection connection = new SqlConnection(Settings.ConnectionString))
+            {
+                string Query = @"Select * From Employees Where EmployeeID = @EmployeeID";
+
+                clsEmployeeDTO employeeDTO = new clsEmployeeDTO();
+                
+                using (SqlCommand command = new SqlCommand(Query, connection))
+                {
+                    command.Parameters.AddWithValue("@EmployeeID", EmployeeID);
+
+                    connection.Open();
+
+                    using (SqlDataReader reader = command.ExecuteReader())
+                    {
+                        if (reader.Read())
+                        {
+                            employeeDTO =  new clsEmployeeDTO()
+                            {
+                                Id = reader.GetInt32(reader.GetOrdinal("EmployeeID")),
+                                FirstName = reader.GetString(reader.GetOrdinal("FirstName")),
+                                LastName = reader.GetString(reader.GetOrdinal("LastName")),
+                                Age = reader.GetByte(reader.GetOrdinal("Age")),
+                                Salary = reader.GetDecimal(reader.GetOrdinal("Salary")),
+                                HireDate = reader.GetDateTime(reader.GetOrdinal("HireDate")),
+                                // Handle NULL for TerminationDate
+                                TerminationDate = reader.IsDBNull(reader.GetOrdinal("TerminationDate"))
+                                                  ? (DateTime?)null
+                                                  : reader.GetDateTime(reader.GetOrdinal("TerminationDate")),
+                            };
+                        }
+                        else
+                        {
+                            return null;
+                        }
+                    }
+                }
+
+                return employeeDTO;
+            }
+        }
+
     }
 }
