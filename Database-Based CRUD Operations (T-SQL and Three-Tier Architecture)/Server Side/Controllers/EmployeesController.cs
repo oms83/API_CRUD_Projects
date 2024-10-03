@@ -2,6 +2,7 @@
 using Data_Access_Layer;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
+using Server_Side.Validation;
 
 namespace Server_Side.Controllers
 {
@@ -54,5 +55,30 @@ namespace Server_Side.Controllers
 
             return Ok(dto);
         }
+
+
+        [HttpPost("AddNewEmployee", Name = "AddNewEmployee")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<clsEmployeeDTO> AddNewEmployee(clsEmployeeDTO employeeDTO)
+        {
+            if (!clsEmployeeValidator.Validator(false).Validate(employeeDTO).IsValid)
+            {
+                return BadRequest("Invalid Employee Date");
+            }
+
+            clsEmployee employee = new clsEmployee(employeeDTO, clsEmployee.enMode.AddNew);
+
+            if (employee.Save())
+            {
+                clsEmployeeDTO dto = employee.employeeDTO;
+
+                return CreatedAtRoute("", dto.Id, dto);
+            }
+
+            return BadRequest("Employee Data Was Not Saved Successfully!");
+        }
+
+
     }
 }

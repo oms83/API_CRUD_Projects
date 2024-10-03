@@ -33,6 +33,7 @@ namespace Business_Layer
             this.FirstName = dto.FirstName;
             this.LastName = dto.LastName;
             this.Age = dto.Age;
+            this.Salary = dto.Salary;
             this.HireDate = dto.HireDate;
             this.TerminationDate = dto.TerminationDate;
 
@@ -56,5 +57,39 @@ namespace Business_Layer
                 return null;
             }
         }
+
+        private bool _AddNewEmployee()
+        {
+            this.Id = clsEmployeeData.AddNewEmployee(this.employeeDTO);
+
+            return this.Id != -1;
+        }
+
+
+        public bool Save()
+        {
+            switch (_Mode)
+            {
+                case enMode.AddNew:
+
+                    if (_AddNewEmployee())
+                    {
+                        _Mode = enMode.Update;
+                        return true;
+                    }
+                    else
+                    {
+                        return false;
+                    }
+
+                case enMode.Update:
+                            return true;
+            }
+
+            return false;
+        }
+
+
+
     }
 }

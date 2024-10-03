@@ -1,6 +1,7 @@
 ﻿using Microsoft.Data.SqlClient;
 using Data_Access_Layer;
 using Azure.Core;
+using System.Data;
 
 namespace Data_Access_Layer
 {
@@ -86,5 +87,43 @@ namespace Data_Access_Layer
             return employee;
         }
 
+        public static int AddNewEmployee(clsEmployeeDTO employee)
+        {
+            using (SqlConnection connection = new SqlConnection(clsSettings.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SP_AddNewEmployee", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@FirstName", employee.FirstName);
+                    command.Parameters.AddWithValue("@LastName", employee.LastName);
+                    command.Parameters.AddWithValue("@Age", employee.Age);
+                    command.Parameters.AddWithValue("@Salary", employee.Salary);
+                    command.Parameters.AddWithValue("@HireDate", employee.HireDate);
+
+                    if (employee.TerminationDate is not null)
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", employee.TerminationDate);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", DBNull.Value);
+                    }
+
+                    var outParameter = new SqlParameter("@EmployeeID", SqlDbType.Int)
+                    {
+                        Direction = ParameterDirection.Output,
+                    };
+
+                    command.Parameters.Add(outParameter); 
+
+                    connection.Open();
+
+                    command.ExecuteNonQuery();
+
+                    return (int)outParameter.Value;
+                }
+            }
+        }
     }
 }
