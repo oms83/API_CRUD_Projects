@@ -83,6 +83,7 @@ namespace Server_Side.Controllers
         [HttpPost("{id}", Name = "UpdateEmployee")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         public ActionResult<clsEmployeeDTO> UpdateEmployee(int id, clsEmployeeDTO employeeDTO)
         {
             if (id <= 0)
