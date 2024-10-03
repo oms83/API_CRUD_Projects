@@ -30,5 +30,29 @@ namespace Server_Side.Controllers
 
             return Ok(employees);
         }
+
+
+        [HttpGet("{id}", Name = "GetEmployeeByID")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<clsEmployeeDTO> GetEmployeeByID(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted Employee ID");
+            }
+
+            clsEmployee? employee = clsEmployee.GetEmployeeByID(id);
+
+            if (employee is null)
+            {
+                return NotFound($"No Employee With ID: {id}");
+            }
+
+            clsEmployeeDTO dto = employee.employeeDTO;
+
+            return Ok(dto);
+        }
     }
 }
