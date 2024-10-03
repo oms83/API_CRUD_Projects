@@ -80,5 +80,45 @@ namespace Server_Side.Controllers
         }
 
 
+        [HttpPost("{id}", Name = "UpdateEmployee")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        public ActionResult<clsEmployeeDTO> UpdateEmployee(int id, clsEmployeeDTO employeeDTO)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted ID");
+            }
+
+            if (!clsEmployeeValidator.Validator(false).Validate(employeeDTO).IsValid)
+            {
+                return BadRequest("Invalid Employee Date");
+            }
+
+            clsEmployee? employee = clsEmployee.GetEmployeeByID(id);
+
+            if (employee == null)
+            {
+                return NotFound($"No Employee With ID:{id}");
+            }
+
+            employee.FirstName = employeeDTO.FirstName;
+            employee.LastName = employeeDTO.LastName;
+            employee.Age = employeeDTO.Age;
+            employee.Salary = employeeDTO.Salary;
+            employee.HireDate = employeeDTO.HireDate;
+            employee.TerminationDate = employeeDTO.TerminationDate;
+
+            if (employee.Save())
+            {
+                clsEmployeeDTO dto = employee.employeeDTO;
+
+                return Ok(dto);
+            }
+
+            return BadRequest("Employee Data Was Not Saved Successfully!");
+        }
+
+
     }
 }

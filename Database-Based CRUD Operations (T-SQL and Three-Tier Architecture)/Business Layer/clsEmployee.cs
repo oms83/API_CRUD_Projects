@@ -64,7 +64,10 @@ namespace Business_Layer
 
             return this.Id != -1;
         }
-
+        private bool _UpdateEmployee()
+        {
+            return clsEmployeeData.UpdateEmployee(Id, this.employeeDTO);
+        }
 
         public bool Save()
         {
@@ -83,7 +86,7 @@ namespace Business_Layer
                     }
 
                 case enMode.Update:
-                            return true;
+                            return _UpdateEmployee();
             }
 
             return false;

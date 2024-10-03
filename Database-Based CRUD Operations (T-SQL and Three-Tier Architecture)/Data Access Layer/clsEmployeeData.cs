@@ -125,5 +125,39 @@ namespace Data_Access_Layer
                 }
             }
         }
+
+        public static bool UpdateEmployee(int id, clsEmployeeDTO employee)
+        {
+            int affectedRows = 0;
+            using (SqlConnection connection = new SqlConnection(clsSettings.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SP_UpdateEmployee", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@EmployeeID", employee.Id);
+                    command.Parameters.AddWithValue("@FirstName", employee.FirstName);
+                    command.Parameters.AddWithValue("@LastName", employee.LastName);
+                    command.Parameters.AddWithValue("@Age", employee.Age);
+                    command.Parameters.AddWithValue("@Salary", employee.Salary);
+                    command.Parameters.AddWithValue("@HireDate", employee.HireDate);
+
+                    if (employee.TerminationDate is not null)
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", employee.TerminationDate);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", DBNull.Value);
+                    }
+
+                    connection.Open();
+
+                    affectedRows = command.ExecuteNonQuery();
+                }
+            }
+
+            return affectedRows > 0;
+        }
     }
 }
