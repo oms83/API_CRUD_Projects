@@ -42,9 +42,13 @@ namespace Client_Side
             //await AddNewEmployee(employee);
             //await AddNewEmployee(invalidEmployeeData);
 
-            await UpdateEmployee(20, employee);
-            await UpdateEmployee(200, employee);
-            await UpdateEmployee(-20, employee);
+            //await UpdateEmployee(20, employee);
+            //await UpdateEmployee(200, employee);
+            //await UpdateEmployee(-20, employee);
+
+            await DeleteEmployee(20);
+            await DeleteEmployee(200);
+            await DeleteEmployee(-20);
         }
 
         static async Task GetAllEmployees()
@@ -201,17 +205,46 @@ namespace Client_Side
                 else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
                 {
                     Console.WriteLine("BadRequest: Invalid Employee Data");
-                    return;
                 }
                 else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
                 {
                     Console.WriteLine($"NotFound: No Student With ID {{{id}}}");
-                    return;
                 }
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
+            }
+        }
+
+        static async Task DeleteEmployee(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                    return;
+                }
+
+                var response = await httpClient.DeleteAsync($"{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Ok: Employee With ID{{{id}}} Deleted Successfully");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"NotFound: No Student With ID {{{id}}}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
             }
         }
     }
