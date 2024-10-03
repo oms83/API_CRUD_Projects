@@ -11,7 +11,9 @@ namespace Client_Side
         {
             httpClient.BaseAddress = new Uri("https://localhost:7074/api/Employees/");
 
-            await GetAllEmployees();
+            //await GetAllEmployees();
+
+            await GetActiveEmployees();
         }
 
         static async Task GetAllEmployees()
@@ -38,5 +40,31 @@ namespace Client_Side
                 Console.WriteLine(ex.Message);
             }
         }
+
+        static async Task GetActiveEmployees()
+        {
+            try
+            {
+                var employees = await httpClient.GetFromJsonAsync<List<clsEmployee>>("GetActiveEmployees");
+
+                if (employees == null)
+                {
+                    Console.WriteLine("BadRequest: Data was not fetched successfully.");
+                    return;
+                }
+
+                if (employees.Count == 0)
+                {
+                    Console.WriteLine("NotFound: No Data To List");
+                }
+
+                employees.Print();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
     }
 }
