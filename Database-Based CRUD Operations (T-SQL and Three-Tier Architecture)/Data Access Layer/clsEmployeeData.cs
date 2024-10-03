@@ -159,5 +159,24 @@ namespace Data_Access_Layer
 
             return affectedRows > 0;
         }
+        public static bool DeleteEmployee(int id)
+        {
+            int affectedRows = 0;
+            using (SqlConnection connection = new SqlConnection(clsSettings.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand("SP_DeleteEmployee", connection))
+                {
+                    command.CommandType = System.Data.CommandType.StoredProcedure;
+
+                    command.Parameters.AddWithValue("@EmployeeID", id);
+
+                    connection.Open();
+
+                    affectedRows = command.ExecuteNonQuery();
+                }
+            }
+
+            return affectedRows > 0;
+        }
     }
 }

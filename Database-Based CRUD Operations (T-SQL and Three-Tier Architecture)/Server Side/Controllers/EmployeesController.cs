@@ -80,7 +80,7 @@ namespace Server_Side.Controllers
         }
 
 
-        [HttpPost("{id}", Name = "UpdateEmployee")]
+        [HttpPut("{id}", Name = "UpdateEmployee")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
@@ -121,5 +121,30 @@ namespace Server_Side.Controllers
         }
 
 
+        [HttpDelete("{id}", Name = "DeleteEmployee")]
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        public ActionResult<clsEmployeeDTO> DeleteEmployee(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted ID");
+            }
+
+            clsEmployee? employee = clsEmployee.GetEmployeeByID(id);
+
+            if (employee == null)
+            {
+                return NotFound($"No Employee With ID:{id}");
+            }
+            
+            if (clsEmployee.DeleteEmployee(id))
+            {
+                return Ok($"Employee With ID:{id} Has Been Deleted Successfully");
+            }
+
+            return BadRequest($"Failed to delete employee with ID: {id}!");
+        }
     }
 }

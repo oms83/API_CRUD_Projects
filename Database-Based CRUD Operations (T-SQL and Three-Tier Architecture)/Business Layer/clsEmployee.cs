@@ -57,7 +57,10 @@ namespace Business_Layer
                 return null;
             }
         }
-
+        public static bool DeleteEmployee(int id)
+        {
+            return clsEmployeeData.DeleteEmployee(id);
+        }
         private bool _AddNewEmployee()
         {
             this.Id = clsEmployeeData.AddNewEmployee(this.employeeDTO);
