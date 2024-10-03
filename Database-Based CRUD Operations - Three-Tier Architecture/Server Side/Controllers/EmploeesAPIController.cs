@@ -102,5 +102,42 @@ namespace Server_Side.Controllers
 
             return BadRequest("Employee was not inserted successfully");
         }
+
+
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [HttpPut("{id}", Name = "UpdateEmployee")]
+        public ActionResult<clsEmployeeDTO> UpdateEmployee(int id, clsEmployeeDTO employeeDTO)
+        {
+            if (id <= 0)
+            {
+                return BadRequest("Not Accepted Employee ID");
+            }
+
+            if (!EmployeeValidator.Validator(false).Validate(employeeDTO).IsValid)
+            {
+                return BadRequest("Invalid Employee Data");
+            }
+
+            Employee employee = Employee.GetEmployeeByID(id);
+            
+            employee.FirstName = employeeDTO.FirstName;
+            employee.LastName = employeeDTO.LastName;
+            employee.Salary = employeeDTO.Salary;
+            employee.TerminationDate = employeeDTO.TerminationDate;
+            employee.HireDate = employeeDTO.HireDate;
+            employee.Age = employeeDTO.Age;
+            
+            if (employee.Save())
+            {
+                employeeDTO = employee.EmployeeDTO;
+
+                return Ok(employeeDTO);
+            }
+
+            return BadRequest("Employee was not updated successfully");
+        }
+
     }
+
 }

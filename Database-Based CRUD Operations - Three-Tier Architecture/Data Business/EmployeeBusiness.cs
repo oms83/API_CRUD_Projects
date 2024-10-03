@@ -69,7 +69,10 @@ namespace Data_Business
 
             return this.Id != -1;
         }
-
+        private bool _UpdateEmployee()
+        {
+            return EmployeeDataAccess.UpdateEmployee(this.EmployeeDTO);
+        }
         public bool Save()
         {
             switch (_Mode)
@@ -77,6 +80,7 @@ namespace Data_Business
                 case enMode.AddNew:
                     if (_AddNewEmployee())
                     {
+                        _Mode = enMode.Update;
                         return true;
                     }
                     else
@@ -85,7 +89,7 @@ namespace Data_Business
                     }
 
                 case enMode.Update:
-                    return false;
+                    return _UpdateEmployee();
             }
 
             return false;

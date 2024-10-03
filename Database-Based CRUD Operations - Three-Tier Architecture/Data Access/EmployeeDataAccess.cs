@@ -141,8 +141,14 @@ namespace Data_Access
                     command.Parameters.AddWithValue("Age", employeeDTO.Age);
                     command.Parameters.AddWithValue("Salary", employeeDTO.Salary);
                     command.Parameters.AddWithValue("HireDate", employeeDTO.HireDate);
-                    command.Parameters.AddWithValue("TerminationDate", employeeDTO.TerminationDate);
-
+                    if (employeeDTO.TerminationDate != null)
+                    {
+                        command.Parameters.AddWithValue("TerminationDate", employeeDTO.TerminationDate);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("TerminationDate", DBNull.Value);
+                    }
                     connection.Open();
 
                     object result = command.ExecuteScalar();
@@ -158,5 +164,47 @@ namespace Data_Access
             }
         }
 
+        public static bool UpdateEmployee(clsEmployeeDTO employeeDTO)
+        {
+            using (SqlConnection connection = new SqlConnection(Settings.ConnectionString))
+            {
+                int AffectedRows = 0;
+                string Query = @"Update Employees
+                                Set
+                                FirstName = @FirstName,
+                                LastName = @LastName,
+                                Age = @Age,
+                                Salary = @Salary,
+                                HireDate = @HireDate,
+                                TerminationDate = @TerminationDate
+                                Where EmployeeID = @EmployeeID;
+                                ";
+
+                using (SqlCommand command = new SqlCommand(Query, connection))
+                {
+                    command.Parameters.AddWithValue("@EmployeeID", employeeDTO.Id);
+                    command.Parameters.AddWithValue("@FirstName", employeeDTO.FirstName);
+                    command.Parameters.AddWithValue("@LastName", employeeDTO.LastName);
+                    command.Parameters.AddWithValue("@Age", employeeDTO.Age);
+                    command.Parameters.AddWithValue("@Salary", employeeDTO.Salary);
+                    command.Parameters.AddWithValue("@HireDate", employeeDTO.HireDate);
+
+                    if (employeeDTO.TerminationDate != null)
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", employeeDTO.TerminationDate);
+                    }
+                    else
+                    {
+                        command.Parameters.AddWithValue("@TerminationDate", DBNull.Value);
+                    }
+
+                    connection.Open();
+
+                    AffectedRows = command.ExecuteNonQuery();
+                }
+
+                return (AffectedRows > 0);
+            }
+        }
     }
 }
