@@ -106,6 +106,7 @@ namespace Server_Side.Controllers
 
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
         [HttpPut("{id}", Name = "UpdateEmployee")]
         public ActionResult<clsEmployeeDTO> UpdateEmployee(int id, clsEmployeeDTO employeeDTO)
         {
@@ -120,6 +121,11 @@ namespace Server_Side.Controllers
             }
 
             Employee employee = Employee.GetEmployeeByID(id);
+
+            if (employee is null)
+            {
+                return NotFound($"No Employee With ID{{{id}}}");
+            }
             
             employee.FirstName = employeeDTO.FirstName;
             employee.LastName = employeeDTO.LastName;
@@ -138,6 +144,31 @@ namespace Server_Side.Controllers
             return BadRequest("Employee was not updated successfully");
         }
 
-    }
 
+        [ProducesResponseType(StatusCodes.Status200OK)]
+        [ProducesResponseType(StatusCodes.Status400BadRequest)]
+        [ProducesResponseType(StatusCodes.Status404NotFound)]
+        [HttpDelete("{id}", Name = "DeleteEmployee")]
+        public ActionResult DeleteEmployee(int id)
+        {
+            if (id <= 0)
+            {
+                return BadRequest($"Not Accepted Employee ID {{{id}}}");
+            }
+
+            Employee employee = Employee.GetEmployeeByID(id);
+
+            if (employee is null)
+            {
+                return NotFound($"No Employee With ID{{{id}}}");
+            }
+
+            if (Employee.DeleteEmployee(id))
+            {
+                return Ok($"Employee With ID{{{id}}} Has Been Deleted Successfully");
+            }
+
+            return BadRequest($"Failed to delete Employee with ID{{{id}}}.");
+        }
+    }
 }

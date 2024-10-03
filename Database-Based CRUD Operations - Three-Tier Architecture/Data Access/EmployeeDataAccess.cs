@@ -206,5 +206,25 @@ namespace Data_Access
                 return (AffectedRows > 0);
             }
         }
+
+        public static bool DeleteEmployee(int employeeId)
+        {
+            string Query = "Delete From Employees Where EmployeeID = @EmployeeID;";
+            int affectedRows = 0;
+
+            using (SqlConnection connection = new SqlConnection(Settings.ConnectionString))
+            {
+                using (SqlCommand command = new SqlCommand(Query, connection))
+                {
+                    command.Parameters.AddWithValue("@EmployeeID", employeeId); 
+
+                    connection.Open();
+
+                    affectedRows = command.ExecuteNonQuery();  
+                }
+            }
+
+            return (affectedRows > 0);
+        }
     }
 }

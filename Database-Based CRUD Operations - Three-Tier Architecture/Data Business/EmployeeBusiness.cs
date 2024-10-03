@@ -1,4 +1,5 @@
-﻿using Data_Access;
+﻿using Azure.Core;
+using Data_Access;
 using System;
 
 
@@ -63,6 +64,10 @@ namespace Data_Business
             }
         }
 
+        public static bool DeleteEmployee(int Id)
+        {
+            return EmployeeDataAccess.DeleteEmployee(Id);
+        }
         private bool _AddNewEmployee()
         {
             this.Id = Data_Access.EmployeeDataAccess.AddNewStudent(this.EmployeeDTO);
