@@ -30,14 +30,22 @@ namespace Client_Side
         {
             httpClient.BaseAddress = new Uri("https://localhost:7026/api/Employees/");
 
-            await GetAllEmployees();
+            //await GetAllEmployees();
 
-            await GetEmployeeByID(1);
-            await GetEmployeeByID(-1);
-            await GetEmployeeByID(100);
+            //await GetEmployeeByID(1);
+            //await GetEmployeeByID(-1);
+            //await GetEmployeeByID(100);
 
-            await AddNewEmployee(employee);
-            await AddNewEmployee(invalidEmployeeData);
+            //await AddNewEmployee(employee);
+            //await AddNewEmployee(invalidEmployeeData);
+
+            //await UpdateEmployee(15, employee);
+            //await UpdateEmployee(200, employee);
+            //await UpdateEmployee(-20, employee);
+
+            await DeleteEmployee(15);
+            await DeleteEmployee(200);
+            await DeleteEmployee(-20);
         }
 
         static async Task GetAllEmployees()
