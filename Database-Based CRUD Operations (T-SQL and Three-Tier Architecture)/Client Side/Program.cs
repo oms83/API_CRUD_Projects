@@ -184,5 +184,37 @@ namespace Client_Side
             }
         }
 
+
+        static async Task DeleteEmployee(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                    return;
+                }
+
+                var response = await httpClient.DeleteAsync($"{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    Console.WriteLine($"Ok: Employee With ID{{{id}}} Deleted Successfully");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"NotFound: No Student With ID {{{id}}}");
+                }
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine(e.Message);
+            }
+        }
+
     }
 }
