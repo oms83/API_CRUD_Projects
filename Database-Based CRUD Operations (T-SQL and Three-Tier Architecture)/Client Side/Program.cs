@@ -11,6 +11,10 @@ namespace Client_Side
             httpClient.BaseAddress = new Uri("https://localhost:7026/api/Employees/");
 
             await GetAllEmployees();
+
+            await GetEmployeeByID(1);
+            await GetEmployeeByID(-1);
+            await GetEmployeeByID(100);
         }
 
         static async Task GetAllEmployees()
@@ -38,5 +42,46 @@ namespace Client_Side
             }
         }
 
+
+        static async Task GetEmployeeByID(int id)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                    return;
+                }
+
+                var response = await httpClient.GetAsync($"{id}");
+
+                if (response.IsSuccessStatusCode)
+                {
+                    clsEmployee? employee = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+                    if (employee is not null)
+                    {
+                        Console.WriteLine(employee);
+                    }
+                    else
+                    {
+                        Console.WriteLine($"NotFound: No Student With ID {{{id}}}");
+                        return;
+                    }
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"NotFound: No Student With ID{{{id}}}");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine($"Bad Request: Not Accepted ID{{{id}}}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
     }
 }
