@@ -140,5 +140,49 @@ namespace Client_Side
                 Console.WriteLine(ex.Message);
             }
         }
+
+
+        static async Task UpdateEmployee(int id, clsEmployee employee)
+        {
+            try
+            {
+                if (id <= 0)
+                {
+                    Console.WriteLine("BadRequest: Not Accepted Employee ID");
+                    return;
+                }
+
+                if (!clsEmployeeValidator.Validator(false).Validate(employee).IsValid)
+                {
+                    Console.WriteLine("BadRequest: Invalid Employee Data");
+                    return;
+                }
+
+                var response = await httpClient.PutAsJsonAsync<clsEmployee>($"{id}", employee);
+
+                if (response.IsSuccessStatusCode)
+                {
+                    clsEmployee? updateEmployee = await response.Content.ReadFromJsonAsync<clsEmployee>();
+
+                    if (updateEmployee is not null)
+                    {
+                        Console.WriteLine(updateEmployee);
+                    }
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.BadRequest)
+                {
+                    Console.WriteLine("BadRequest: Invalid Employee Data");
+                }
+                else if (response.StatusCode == System.Net.HttpStatusCode.NotFound)
+                {
+                    Console.WriteLine($"NotFound: No Student With ID {{{id}}}");
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine(ex.Message);
+            }
+        }
+
     }
 }
