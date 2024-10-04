@@ -11,11 +11,11 @@ namespace Server_Side.Controllers
     public class EmployeesController : ControllerBase
     {
 
-        [HttpGet("GetAllEmplyees", Name = "GetAllEmplyees")]
+        [HttpGet("GetAllEmployees", Name = "GetAllEmployees")]
         [ProducesResponseType(StatusCodes.Status200OK)]
         [ProducesResponseType(StatusCodes.Status404NotFound)]
         [ProducesResponseType(StatusCodes.Status400BadRequest)]
-        public ActionResult<IEnumerable<clsEmployeeDTO>> GetAllEmplyees()
+        public ActionResult<IEnumerable<clsEmployeeDTO>> GetAllEmployees()
         {
             List<clsEmployeeDTO> employees = clsEmployee.GetAllEmployees().ToList();
 
